@@ -34,9 +34,13 @@
 
 - (void)handleMethodCall:(FlutterMethodCall *)call result:(FlutterResult)result {
     if ([@"initialize" isEqualToString:call.method]) {
+    #ifndef DEBUG
         [Fabric with:@[[Crashlytics self]]];
         _isFabricInitialized = true;
+    #endif
         result(nil);
+    } else if ([@"crash" isEqualToString:call.method]) {
+        [[Crashlytics sharedInstance] crash];
     } else if (_isFabricInitialized) {
         [self onInitialisedMethodCall:call result:result];
     } else {

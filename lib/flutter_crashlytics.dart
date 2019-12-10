@@ -1,4 +1,6 @@
 import 'dart:async';
+import 'dart:io';
+import 'dart:developer' as dev;
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -33,6 +35,25 @@ class FlutterCrashlytics {
     };
 
     return await _channel.invokeMethod('reportCrash', data);
+  }
+
+  void _dumpErrorToConsole(dynamic error, StackTrace stackTrace) {
+    dev.log("============================== It is a simulate crash ==============================");
+    dev.log("Message: ${error.toString()}");
+    final cause = stackTrace == null ? 'unknown' : _cause(stackTrace);
+    dev.log("Cause: $cause");
+    final traces = stackTrace == null ? [] : _traces(stackTrace);
+    traces.forEach((t) {
+      dev.log("Trace: $t");
+    });
+    dev.log("============================== It is a simulate crash ==============================");
+  }
+
+  Future<void> crash(dynamic error, StackTrace stackTrace) async {
+
+    _dumpErrorToConsole(error, stackTrace);
+
+    return await _channel.invokeMethod('crash');
   }
 
   Future<void> reportCrash(dynamic error, StackTrace stackTrace,

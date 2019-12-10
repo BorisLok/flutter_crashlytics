@@ -30,8 +30,12 @@ public class FlutterCrashlyticsPlugin implements MethodChannel.MethodCallHandler
     @Override
     public void onMethodCall(MethodCall methodCall, MethodChannel.Result result) {
         if (methodCall.method.equals("initialize")) {
-            Fabric.with(context, new Crashlytics(), new CrashlyticsNdk());
+            Fabric.with(context, new Crashlytics.Builder().disabled( true ).build());
             result.success(null);
+        } else if (methodCall.method.equals("crash")) {
+            final Intent intent = new Intent(context, CrashActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            context.startActivity(intent);
         } else {
             if (Fabric.isInitialized()) {
                 onInitialisedMethodCall(methodCall, result);
